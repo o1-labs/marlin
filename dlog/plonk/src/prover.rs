@@ -268,6 +268,15 @@ impl<G: CommitmentCurve> ProverProof<G> where G::ScalarField : CommitmentField
                 (&index.cs.sigmam[1], None),
             ]);
 
+        let mut max_size = 0;
+        for (plm, _) in &polynoms {
+            if plm.coeffs.len() > max_size {
+                max_size = plm.coeffs.len();
+            }
+        }
+
+        let rounds = 1 >> max_size;
+
         Ok(Self
         {
             l_comm,
@@ -277,6 +286,7 @@ impl<G: CommitmentCurve> ProverProof<G> where G::ScalarField : CommitmentField
             t_comm,
             proof: index.srs.get_ref().open
             (
+                rounds,
                 group_map,
                 polynoms,
                 &evlp.to_vec(),

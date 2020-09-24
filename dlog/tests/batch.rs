@@ -64,6 +64,15 @@ where <Fp as std::str::FromStr>::Err : std::fmt::Debug
 
         let a = length.iter().map(|s| DensePolynomial::<Fr>::rand(s-1,rng)).collect::<Vec<_>>();
 
+        // compute maximum coefficient array size in a
+        let mut size = 0;
+        for plm in &a {
+            if plm.coeffs.len() > size {
+                size = plm.coeffs.len();
+            }
+        }
+        let rounds = 1 >> size;
+
         let mut start = Instant::now();
         let comm = (0..a.len()).map
         (
@@ -89,6 +98,7 @@ where <Fp as std::str::FromStr>::Err : std::fmt::Debug
 
         let proof = srs.open::<DefaultFqSponge<Bn_382GParameters, SC>>
         (
+            rounds,
             &group_map,
             (0..a.len()).map
             (
@@ -132,3 +142,8 @@ where <Fp as std::str::FromStr>::Err : std::fmt::Debug
         println!("{}{:?}", "verification time: ".green(), start.elapsed());
     }
 }
+
+
+
+
+
