@@ -387,3 +387,49 @@ impl<F: FftField + SquareRootField> ConstraintSystem<F> {
         }
     }
 }
+
+
+
+
+#[cfg(test)]
+mod testslocal {
+    use super::*;
+    use mina_curves::pasta::Fp;
+    use mina_curves::pasta::Fq;
+
+
+    //this test outputs r, o values (which are k_1 and k_2 in the plonk paper) for Fp (the base field of Pallas curve)
+    // and for num of gates being 2^17
+    #[test]
+    fn ro_values_Fp() {
+        let domain = EvaluationDomains::<Fp>::create(2usize.pow(17) as usize);
+        let result = match domain{
+            Some(domain) => {
+                let (r, o) = ConstraintSystem::sample_shifts(&domain.d1);
+                println!("for Fp, r is {:?} and o is {:?}", r, o)
+
+            },
+            None => println!("domain creation failed"),
+        };
+    }
+
+    //this test outputs r, o values (which are k_1 and k_2 in the plonk paper) for Fq (the base field of Vesta curve)
+    // and for num of gates being 2^18
+
+    #[test]
+    fn ro_values_Fq() {
+        let domain = EvaluationDomains::<Fq>::create(2usize.pow(18) as usize);
+        let result = match domain{
+            Some(domain) => {
+                let (r, o) = ConstraintSystem::sample_shifts(&domain.d1);
+                println!("for Fq, r  is {:?} and o is {:?}", r, o)
+
+            },
+            None => println!("domain creation failed"),
+        };
+    }
+
+
+
+
+}
